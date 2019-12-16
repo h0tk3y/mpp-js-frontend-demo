@@ -1,0 +1,1 @@
+package com.h0tk3y.mpp.sample.modelimport kotlinx.serialization.Serializable@Serializabledata class GroupChat(    override val chatId: ChatId,    val owner: UserId,    val chatName: String,    val uniqueLink: String? = null,    val userIds: List<UserId>) : Chat
