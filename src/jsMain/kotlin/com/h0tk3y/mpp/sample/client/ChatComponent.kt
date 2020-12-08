@@ -1,10 +1,7 @@
 package com.h0tk3y.mpp.sample.client
 
 import com.h0tk3y.mpp.sample.model.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.html.InputType
 import kotlinx.html.currentTimeMillis
 import kotlinx.html.js.onChangeFunction
@@ -37,7 +34,7 @@ class ChatComponent(props: ChatProps) : RComponent<ChatProps, ChatState>(props) 
         messageList = MessageList(emptyList())
         currentText = ""
         cycleUpdateJob = GlobalScope.launch {
-            while (true) {
+            while (isActive) {
                 if (updateJob == null) {
                     updateMessages()
                 }

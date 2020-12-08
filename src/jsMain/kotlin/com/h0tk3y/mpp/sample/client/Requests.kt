@@ -10,11 +10,9 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
 import io.ktor.http.Url
 import io.ktor.http.contentType
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.window
 
 private val client = HttpClient(Js) {
     install(JsonFeature) { serializer = KotlinxSerializer(modelJson) }
@@ -53,7 +51,7 @@ suspend fun sendChatMessage(chatId: ChatId, message: Message): Boolean {
     try {
         client.post<Any>(url) {
             contentType(ContentType.Application.Json)
-            body = modelJson.toJson(Message.serializer(), message)
+            body = message
         }
         return true
     } catch (e: Exception) {

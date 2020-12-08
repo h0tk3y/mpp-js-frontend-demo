@@ -8,22 +8,20 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resource
 import io.ktor.http.content.static
-import io.ktor.request.receive
+import io.ktor.request.*
 import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
-import io.ktor.serialization.serialization
-//import io.ktor.serialization.DefaultJsonConfiguration
-//import io.ktor.serialization.serialization
+import io.ktor.serialization.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
 fun main() {
     embeddedServer(Netty) {
         install(ContentNegotiation) {
-            serialization(json = modelJson)
+            json(modelJson)
         }
 
         routing {

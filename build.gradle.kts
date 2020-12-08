@@ -9,14 +9,15 @@ plugins {
 }
 
 repositories {
-    maven("https://kotlin.bintray.com/kotlin-dev")
-    maven("https://kotlin.bintray.com/ktor")
     maven("https://kotlin.bintray.com/kotlin-js-wrappers")
     jcenter()
 }
 
-val ktorVersion = "1.2.6"
+val ktorVersion = "1.4.3"
+val kotlinxSerializationVersion = "1.0.1"
 val logbackVersion = "1.2.3"
+val kotlinReactVersion = "17.0.0"
+val kotlinReactMavenVersion = "17.0.0-pre.129-kotlin-1.4.20"
 
 kotlin {
     jvm {
@@ -28,8 +29,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.14.0")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
             }
         }
         commonTest {
@@ -40,11 +43,9 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
+                implementation("io.ktor:ktor-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-server-netty:$ktorVersion")
                 implementation("io.ktor:ktor-html-builder:$ktorVersion")
-                implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-serialization:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
             }
         }
@@ -56,17 +57,13 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-json-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
                 implementation(npm("text-encoding", "0.7.0"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.14.0")
+                implementation(npm("abort-controller", "3.0.0"))
 
-                implementation("org.jetbrains:kotlin-react:16.9.0-pre.89-kotlin-1.3.60")
-                implementation("org.jetbrains:kotlin-react-dom:16.9.0-pre.89-kotlin-1.3.60")
-                implementation(npm("react", "^16.12.0"))
-                implementation(npm("react-dom", "^16.12.0"))
+                implementation("org.jetbrains:kotlin-react:$kotlinReactMavenVersion")
+                implementation("org.jetbrains:kotlin-react-dom:$kotlinReactMavenVersion")
+                implementation(npm("react", "^$kotlinReactVersion"))
+                implementation(npm("react-dom", "^$kotlinReactVersion"))
             }
         }
         val jsTest by getting {
@@ -74,7 +71,6 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-
         all {
             languageSettings.enableLanguageFeature("InlineClasses")
         }
@@ -85,12 +81,7 @@ application {
     mainClassName = "com.h0tk3y.mpp.sample.server.ServerKt"
 }
 
-val jvmProcessResources by tasks.withType(ProcessResources::class).getting {
-    val jsWebpackTaskName =
-        if (project.findProperty("production") == "true")
-            "jsBrowserProductionWebpack"
-        else
-            "jsBrowserDevelopmentWebpack"
-    val jsWebpackTask = tasks.withType(KotlinWebpack::class).named(jsWebpackTaskName)
-    from(jsWebpackTask.map { project.files(it.destinationDirectory) })
+val jsBrowserDevelopmentWebpack by tasks.withType<KotlinWebpack>().existing
+kotlin.jvm().compilations["main"].defaultSourceSet {
+    resources.srcDirs(jsBrowserDevelopmentWebpack.map { it.destinationDirectory })
 }

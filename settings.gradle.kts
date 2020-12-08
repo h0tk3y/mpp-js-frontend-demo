@@ -4,8 +4,9 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        kotlin("multiplatform").version("1.3.70-dev-2837")
-        kotlin("plugin.serialization").version("1.3.70-dev-2837")
+        val kotlinVersion = "1.4.20"
+        kotlin("multiplatform").version(kotlinVersion)
+        kotlin("plugin.serialization").version(kotlinVersion)
     }
 }
 
